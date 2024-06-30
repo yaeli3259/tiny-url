@@ -36,7 +36,7 @@ add :async (req, res) => {
   
       await newLink.save();
   
-      const shortUrl = `https://tinyurl.co.il/${newLink._id}`;
+      const shortUrl = `http://localhost:3000/${newLink._id}`;
       res.status(201).json({ originalUrl: newLink.originalUrl, shortUrl });
     } catch (error) {
       console.error(error);
