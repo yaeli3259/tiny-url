@@ -15,7 +15,13 @@ app.use(express.json());
 
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+      console.error('Bad JSON request');
+      return res.status(400).send({ error: 'Bad JSON request' }); // Bad request
+    }
+    next();
+  });
 const port = 3000;
 
 app.get('/',(req,res)=>{
@@ -28,7 +34,12 @@ app.listen(port,()=>{
     console.log(`Example app listening on http://localhost:${port}`);
 })
 
-
+// try {
+//     JSON.parse(yourJSONString); // Replace with your actual JSON parsing code
+//   } catch (error) {
+//     console.error('JSON parsing error:', error);
+//     // Handle error appropriately, e.g., send an error response to the client
+//  }
 
 // const logMiddleware=(req,res,next)=>{
 //   // req.UUID=crypto.randomUUID();

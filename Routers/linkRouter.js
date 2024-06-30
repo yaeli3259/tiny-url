@@ -1,6 +1,6 @@
 import express from "express";
 
-import LinksController from '../Controllers/LinksController.js';
+import LinksController from '../Controllers/linksController.js';
 
 
 const LinkRouter = express.Router();

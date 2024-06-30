@@ -19,39 +19,30 @@ const LinksController = {
       res.status(400).json({ message: e.message });
       }
   },
-  add: async (req, res) => {   
-    const { originalUrl, targets } = req.body; 
-
+add :async (req, res) => {
+    const { originalUrl, targets } = req.body;
+  
     try {
       const newLink = await linkModel.create({ originalUrl });
-      
+  
       if (targets && targets.length > 0) {
         const newTargets = [];
-
         for (const target of targets) {
           const newTarget = new targetModel(target);
           newTargets.push(newTarget);
         }
-
         newLink.targetValues.push(...newTargets);
       }
-
+  
       await newLink.save();
-
-      res.status(201).json(newLink);
+  
+      const shortUrl = `https://tinyurl.co.il/${newLink._id}`;
+      res.status(201).json({ originalUrl: newLink.originalUrl, shortUrl });
     } catch (error) {
-      res.status(400).json({ message: error.message });
+      console.error(error);
+      res.status(400).json({ message: 'Failed to create short URL', error: error.message });
     }
   },
-//   add:async(req,res)=>{   
-//     const {originalUrl}=req.body;      
-//     try {
-//       const newLink = await linkModel.create({originalUrl})
-//       res.json(newLink);
-//     }catch(e){
-//       res.status(400).json({ message: e.message });
-//     }
-// },
 
 update: async (req, res) => {
   const { id } = req.params;
@@ -83,7 +74,7 @@ redirectAndUpdate: async (req, res) => {
       return res.status(404).json({ message: "Link not found" });
     }
 
-    const targetParamValue = req.query.target;
+    const targetParamValue = req.query[link.targetParamName];
     
     link.clicks.push(new clickModel({
       insertedAt: new Date(),
